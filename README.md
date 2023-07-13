@@ -15,7 +15,7 @@
 7. orders   (about online order)
 8. reserve (about reservation)
 
-# View(9) - Html, CSS, JavaSCript, BootStrap, Thymeleaf
+# View(8) - Html, CSS, JavaSCript, BootStrap, Thymeleaf
 1. index.html
   - Landing page. You can see the information about the store.
 
@@ -47,7 +47,7 @@
 7. Login.html
  - User login
    
-9. Register.html
+8. Register.html
  - Register a new user.
    All user will be registred as a user role, so if you want to register a admin user, then you can do it at the database directly.   
 
