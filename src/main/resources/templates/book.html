@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,16 +30,7 @@
 </head>
 <body>
     <div class="container-xxl bg-white p-0">
-        <!-- Spinner Start -->
-        <!--
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        -->
-        <!-- Spinner End -->        
-        
+
         <div id="header">
             <a href="index"><img src="../img/logo.png" class="logo" alt="" width="100px"></a>
             <nav>
@@ -63,52 +54,56 @@
                         <strong>Your browser does not support the video tag.</strong>
                     </video>
                 </div>
-                <!--
-                <div class="col-md-6">
-                    <div class="video">
-                        <button type="button" class="btn-play" data-bs-toggle="modal" data-src="../img/restaurant1.mp4" data-bs-target="#videoModal">
-                            <span></span>
-                        </button>
-                    </div>
-                </div>
-                -->
+
                 <div class="col-md-6 bg-dark d-flex align-items-center">
                     <div class="p-5 wow fadeInUp" data-wow-delay="0.2s">
                         <h5 class="section-title ff-secondary text-start text-primary fw-normal">Reservation</h5>
                         <h1 class="text-white mb-4">Book A Table Online</h1>
-                        <form>
+                        <form
+                                method="post"
+                                role="form"
+                                th:action="@{/book/save}"
+                                th:object="${reserve}"
+                        >
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" placeholder="Your Name">
+                                        <input type="text" class="form-control" id="name" placeholder="Your Name" th:field="*{name}">
                                         <label for="name">Your Name</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" placeholder="Your Email">
+                                        <input type="email" class="form-control" id="email" placeholder="Your Email" th:field="*{email}">
+                                        <p th:errors="*{email}" class="text-danger" th:if="${#fields.hasErrors('email')}"></p>
                                         <label for="email">Your Email</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating date" id="date3" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="datetime" placeholder="Date & Time" data-target="#date3" data-toggle="datetimepicker" />
+                                        <input type="text" class="form-control datetimepicker-input" id="datetime" placeholder="Date & Time" data-target="#date3" data-toggle="datetimepicker" th:field="*{date}"/>
                                         <label for="datetime">Date & Time</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
+                                        <!--
                                         <select class="form-select" id="select1">
-                                        <option value="1">People 1</option>
-                                        <option value="2">People 2</option>
-                                        <option value="3">People 3</option>
+                                        -->
+                                        <select class="form-select" id="select1" th:field="*{people}">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6+</option>
                                         </select>
                                         <label for="select1">No Of People</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <textarea class="form-control" placeholder="Special Request" id="message" style="height: 100px"></textarea>
+                                        <textarea class="form-control" placeholder="Special Request" id="message" style="height: 100px" th:field="*{request}"></textarea>
                                         <label for="message">Special Request</label>
                                     </div>
                                 </div>
@@ -121,7 +116,6 @@
                 </div>
             </div>
         </div>
-
         <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
@@ -141,8 +135,78 @@
         </div>
         <!-- Reservation End -->
 
-
-
+        <!-- Booking List only see the Admin -->
+        <div class="booking" th:if="${loginUser == 'ROLE_ADMIN'}">
+            <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 pb-3 active" data-bs-toggle="pill" href="#tab-1">
+                        <div class="ps-3">
+                            <h6 class="mt-n1 mb-0">Valid Reservations</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-2">
+                        <div class="ps-3">
+                            <h6 class="mt-n1 mb-0">All Reservations</h6>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <!-- Reservations -->
+                 <div id="tab-1" class="tab-pane fade show p-0 active">
+                    <!-- Available Reservations -->
+                    <div class="booking List" th:if="${validReservations != null and not #lists.isEmpty(validReservations)}">
+                        <table id="valid-reservations" class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Number of People</th>
+                                <th>Request</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each = "reserve : ${validReservations}">
+                                <td th:text="${#dates.format(reserve.date, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td th:text="${reserve.name}"></td>
+                                <td th:text="${reserve.email}"></td>
+                                <td th:text="${reserve.people}"></td>
+                                <td th:text="${reserve.request}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane fade show p-0">
+                    <!-- All Reservations -->
+                    <div class="booking List" th:if="${allReservations != null and not #lists.isEmpty(allReservations)}">
+                        <table id="all-reservations" class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Number of People</th>
+                                <th>Request</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each = "reserve : ${allReservations}">
+                                <td th:text="${#dates.format(reserve.date, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td th:text="${reserve.name}"></td>
+                                <td th:text="${reserve.email}"></td>
+                                <td th:text="${reserve.people}"></td>
+                                <td th:text="${reserve.request}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
          <!-- Footer Start -->
          <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">

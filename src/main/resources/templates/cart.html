@@ -26,20 +26,22 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .table {
+            text-align: center; /* 테이블 내용 가운데 정렬 */
+        }
+
+        .table th,
+        .table td {
+            text-align: center; /* 테이블 해더와 td 텍스트 가운데 정렬 */
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
     
     <div class="container-xxl bg-white p-0">
-        <!-- Spinner Start -->
-        <!--
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        -->
-        <!-- Spinner End -->
-        
+
         <div id="header">
             <a href="index"><img src="../img/logo.png" class="logo" alt="" width="100px"></a>
             <nav>
@@ -55,55 +57,100 @@
         </div>
         
         <!-- Cart -->
-        <!--
-        <div id="cart" class="section-p1">
-            <table width="100%">
-                <thead>
-                    <tr>
-                        <td>Remove</td>
-                        <td>Image</td>
-                        <td>Food</td>
-                        <td>Price</td>
-                        <td>Quantity</td>
-                        <td>Subtotal</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><i class="far fa-times-circle"></i><a href="#"></a></td>
-                        <td><img src="../img/menu-1.jpg" alt=""></td>
-                        <td>Hamberger</td>
-                        <td>$12.99</td>
-                        <td><input type="number" value="1"></td>
-                        <td>$12.99</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        -->
-        
         <div class="container">
-            <div class="row col-md-10">
-            <h2>List of Selected Items</h2>
+            <!-- As a heading -->
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <span class="navbar-brand mb-0 h2">List of Selected Items</span>
+                    <ul th:if="${loginUser != null}" class="col-md-4 navbar-nav d-flex flex-wrap flex-row justify-content-between" style="list-style-type: none;">
+                        <li class="nav-item">
+                            <p class="nav-link" th:text="'Hello! ' + ${loginUser}"></p>
+                        </li>
+                        <form method="post" action="/logout">
+                            <button type="submit" class="nav-link" aria-current="page" style="border: 0px; background-color: white;">Logout</button>
+                        </form>
+                    </ul>
+                </div>
+            </nav>
+
+            <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 pb-3 active" data-bs-toggle="pill" href="#tab-1">
+                        <div class="ps-3">
+                            <h6 class="mt-n1 mb-0">Cart</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-2">
+                        <div class="ps-3">
+                            <h6 class="mt-n1 mb-0">Order History</h6>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+            <!-- Cart -->
+            <div id="tab-1" class="tab-pane fade show p-0 active">
+                <!-- Cart Items -->
+                <table th:if="${items != null}" id="cart-table" class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each = "item : ${items}">
+                            <td><img th:src="@{${item.imgPath}}" alt="Menu Image" width="70px" height="70px"></td>
+                            <td th:text = "${item.name}"></td>
+                            <td th:text="${item.formattedPrice}"></td>
+                            <td>
+                                <button type="button" class="btn btn-link delete-btn" th:attr="onclick='removeItem(\''+ ${item.id} + '\')'">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot th:if="${#lists.size(items)} > 0">
+                        <tr>
+                            <td colspan="2" class="text-end">Sub Total:</td>
+                            <td class="text-center" th:text="'$'+ ${totalPrice}"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-end">Total number of items:</td>
+                            <td class="text-center" th:text="${#lists.size(items)}"></td>
+                            <td><a class="btn btn-primary" href="/order">Go to checkout</a></td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-            <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-            <tr>
-                <th>Name</th>
-                <th>Image</th>
-                <th>Price</th>
-                <th>#</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each = "item : ${items}">
-                <td th:text = "${item.name}"></td>
-                <td><img th:src="@{${item.imgPath}}" alt="Menu Image" width="60px" height="60px"></td>
-                <td th:text="${item.formattedPrice}"></td>
-                
-            </tr>
-            </tbody>
-            </table>
+            <div id="tab-2" class="tab-pane fade show p-0">
+                <!-- History Order -->
+                <table th:if="${historyOrders != null}" id="order-table" class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Date</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each = "order : ${historyOrders}">
+                            <td th:text = "${order.id}"></td>
+                            <td th:text="${#dates.format(order.date, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td><img th:src="@{${order.imgPath}}" alt="Menu Image" width="70px" height="70px"></td>
+                            <td th:text = "${order.name}"></td>
+                            <td th:text="${order.price}"></td>
+                        </tr>
+                    </tbody>                    
+                </table>
+            </div>        
         </div>
 
         <!-- Footer Start -->
@@ -156,7 +203,22 @@
     <script src="../lib/tempusdominus/js/moment.min.js"></script>
     <script src="../lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="../lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-    
+
     <script src="../js/script.js"></script>
+    <script>
+       function removeItem(itemId) {
+            $.ajax({
+                url: '/cart/items/' + itemId,
+                method: 'DELETE',
+                success: function(response) {
+                    // 삭제 요청이 성공한 경우에만 테이블을 업데이트합니다.
+                    $('#cart-table').load('/cart #cart-table');
+                },
+                error: function(xhr, status, error) {
+                    // 오류 처리 로직을 작성하세요.
+                }
+            });
+       }
+    </script>
 </body>
 </html>
