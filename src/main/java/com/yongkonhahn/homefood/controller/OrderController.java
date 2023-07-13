@@ -117,6 +117,6 @@ public class OrderController {
         //Save Order and OrderItems
         orderRepository.save(newOrder);
 
-        return "redirect:/order?success";
+        return "redirect:/cart";
     }
 }

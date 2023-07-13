@@ -41,7 +41,6 @@
 <body>
     
     <div class="container-xxl bg-white p-0">
-
         <div id="header">
             <a href="index"><img src="../img/logo.png" class="logo" alt="" width="100px"></a>
             <nav>
@@ -91,44 +90,44 @@
             </ul>
             <div class="tab-content">
             <!-- Cart -->
-            <div id="tab-1" class="tab-pane fade show p-0 active">
-                <!-- Cart Items -->
-                <table th:if="${items != null}" id="cart-table" class="table table-bordered table-hover">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Delete</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each = "item : ${items}">
-                            <td><img th:src="@{${item.imgPath}}" alt="Menu Image" width="70px" height="70px"></td>
-                            <td th:text = "${item.name}"></td>
-                            <td th:text="${item.formattedPrice}"></td>
-                            <td>
-                                <button type="button" class="btn btn-link delete-btn" th:attr="onclick='removeItem(\''+ ${item.id} + '\')'">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tfoot th:if="${#lists.size(items)} > 0">
+                <div id="tab-1" class="tab-pane fade show p-0 active">
+                    <!-- Cart Items -->
+                    <table th:if="${items != null}" id="cart-table" class="table table-bordered table-hover">
+                        <thead class="table-dark">
                         <tr>
-                            <td colspan="2" class="text-end">Sub Total:</td>
-                            <td class="text-center" th:text="'$'+ ${totalPrice}"></td>
-                            <td></td>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Delete</th>
                         </tr>
-                        <tr>
-                            <td colspan="2" class="text-end">Total number of items:</td>
-                            <td class="text-center" th:text="${#lists.size(items)}"></td>
-                            <td><a class="btn btn-primary" href="/order">Go to checkout</a></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div id="tab-2" class="tab-pane fade show p-0">
+                        </thead>
+                        <tbody>
+                            <tr th:each = "item : ${items}">
+                                <td><img th:src="@{${item.imgPath}}" alt="Menu Image" width="70px" height="70px"></td>
+                                <td th:text = "${item.name}"></td>
+                                <td th:text="${item.formattedPrice}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-link delete-btn" th:attr="onclick='removeItem(\''+ ${item.id} + '\')'">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot th:if="${#lists.size(items)} > 0">
+                            <tr>
+                                <td colspan="2" class="text-end">Sub Total:</td>
+                                <td class="text-center" th:text="'$'+ ${totalPrice}"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-end">Total number of items:</td>
+                                <td class="text-center" th:text="${#lists.size(items)}"></td>
+                                <td><a class="btn btn-primary" href="/order">Go to checkout</a></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div id="tab-2" class="tab-pane fade show p-0">
                 <!-- History Order -->
                 <table th:if="${historyOrders != null}" id="order-table" class="table table-bordered table-hover">
                     <thead class="table-dark">
@@ -150,7 +149,8 @@
                         </tr>
                     </tbody>                    
                 </table>
-            </div>        
+            </div>
+            </div>
         </div>
 
         <!-- Footer Start -->
@@ -211,11 +211,11 @@
                 url: '/cart/items/' + itemId,
                 method: 'DELETE',
                 success: function(response) {
-                    // 삭제 요청이 성공한 경우에만 테이블을 업데이트합니다.
+                    // success
                     $('#cart-table').load('/cart #cart-table');
                 },
                 error: function(xhr, status, error) {
-                    // 오류 처리 로직을 작성하세요.
+                    // error
                 }
             });
        }
