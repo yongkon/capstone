@@ -34,3 +34,4 @@ build/
 
 ### Oauth ###
 **/src/main/resources/application-oauth.properties
+/log/
