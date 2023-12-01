@@ -15,7 +15,7 @@
 7. orders   (about online order)
 8. reserve (about reservation)
 
-# View(8) - Html, CSS, JavaSCript, BootStrap, Thymeleaf
+# View(8) - Html, CSS, JavaScript, BootStrap, Thymeleaf
 1. index.html
   - Landing page. You can see the information about the store.
 
